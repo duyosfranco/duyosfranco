@@ -22,6 +22,10 @@ body {
   font-size: 1rem;
 }
 
+.no-scroll {
+  overflow: hidden;
+}
+
 a {
   color: inherit;
 }
@@ -35,9 +39,51 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
+.site-header {
+  background: rgba(10, 42, 59, 0.92);
+  color: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+}
+
+.site-header__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+}
+
+.site-header__brand {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+}
+
+.site-header__login {
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.site-header__login:hover,
+.site-header__login:focus-visible {
+  background: rgba(255, 255, 255, 0.24);
+  transform: translateY(-1px);
+}
+
 .hero {
   position: relative;
-  min-height: 70vh;
+  min-height: 60vh;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -58,14 +104,14 @@ textarea:focus-visible {
   z-index: 1;
   margin-left: min(6vw, 5rem);
   display: grid;
-  gap: 2rem;
+  gap: 1.5rem;
   text-align: left;
 }
 
 .hero__branding {
   display: flex;
   align-items: center;
-  gap: clamp(1rem, 4vw, 2.5rem);
+  gap: clamp(0.75rem, 3vw, 2rem);
 }
 
 .hero__icon {
@@ -76,17 +122,17 @@ textarea:focus-visible {
 
 .hero__heading {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .hero__title {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  margin: 0 0 0.5rem;
-  letter-spacing: 0.08em;
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin: 0;
+  letter-spacing: 0.04em;
 }
 
 .hero__subtitle {
-  margin: 0 0 1.5rem;
+  margin: 0 0 1rem;
   font-weight: 500;
 }
 
@@ -121,8 +167,21 @@ textarea:focus-visible {
   }
 }
 
+@media (max-width: 480px) {
+  .site-header__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .site-header__login {
+    align-self: flex-end;
+  }
+}
+
 .section {
   padding: 4rem 1.5rem;
+  scroll-margin-top: 5rem;
 }
 
 .section--highlight {
@@ -258,28 +317,17 @@ textarea {
   border-bottom: 1px solid rgba(16, 32, 39, 0.08);
 }
 
+.admin-description {
+  margin: 0;
+  color: var(--color-muted);
+}
+
 .admin-header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-}
-
-.admin-panel {
-  border-radius: 20px;
-  border: 1px solid rgba(16, 32, 39, 0.12);
-  padding: 2rem;
-  background: #f7fbfb;
-  display: grid;
-  gap: 2rem;
-  margin-top: 1.5rem;
-}
-
-.admin-login,
-.admin-content {
-  display: grid;
-  gap: 1.25rem;
 }
 
 .admin-actions {
@@ -376,6 +424,109 @@ textarea {
   text-align: center;
   display: grid;
   gap: 0.5rem;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.modal__content {
+  position: relative;
+  background: #ffffff;
+  color: var(--color-text);
+  border-radius: 20px;
+  width: min(560px, calc(100% - 2rem));
+  padding: 2rem;
+  box-shadow: 0 25px 60px rgba(10, 42, 59, 0.25);
+  display: grid;
+  gap: 1.5rem;
+  z-index: 1;
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.modal__close {
+  background: transparent;
+  border: none;
+  color: var(--color-secondary);
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+.modal__close:hover,
+.modal__close:focus-visible {
+  color: var(--color-primary-dark);
+}
+
+.login-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.login-tab {
+  border-radius: 999px;
+  border: 1px solid rgba(16, 32, 39, 0.18);
+  background: #f2f7f7;
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.login-tab--active,
+.login-tab:hover,
+.login-tab:focus-visible {
+  background: var(--color-secondary);
+  color: #ffffff;
+  border-color: var(--color-secondary);
+}
+
+.login-panels {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.login-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.login-panel--hidden {
+  display: none;
+}
+
+.login-panel h3 {
+  margin: 0;
+  color: var(--color-secondary);
+}
+
+.login-panel p {
+  margin: 0;
 }
 
 @media (max-width: 768px) {
