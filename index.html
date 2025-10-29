@@ -58,7 +58,7 @@
             <li><span aria-hidden="true">♻️</span> Gestión responsable de residuos</li>
           </ul>
         </div>
-        <form class="form" aria-describedby="form-instructions">
+        <form class="form" id="reserva-form" aria-describedby="form-instructions">
           <p id="form-instructions">Los campos marcados con * son obligatorios.</p>
           <div class="form__field">
             <label for="nombre">Nombre completo *</label>
@@ -91,6 +91,7 @@
             <textarea id="comentarios" name="comentarios" rows="4"></textarea>
           </div>
           <button type="submit" class="button">Enviar solicitud</button>
+          <p class="form__feedback" id="form-feedback" role="status" aria-live="polite"></p>
         </form>
       </div>
     </section>
@@ -103,6 +104,52 @@
     </section>
   </main>
 
+  <section class="section section--admin" id="admin" aria-labelledby="admin-title">
+    <div class="section__inner section__inner--narrow">
+      <div class="admin-header">
+        <h2 id="admin-title">Panel de administración</h2>
+        <button type="button" class="button button--secondary" id="admin-toggle" aria-controls="admin-panel" aria-expanded="false">Acceso administrador</button>
+      </div>
+      <div id="admin-panel" class="admin-panel" hidden>
+        <form id="admin-login" class="admin-login" aria-describedby="admin-help">
+          <p id="admin-help">Ingresá la contraseña de administrador para revisar o descargar el registro de solicitudes.</p>
+          <div class="form__field">
+            <label for="admin-password">Contraseña de administrador</label>
+            <input type="password" id="admin-password" name="admin-password" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="button">Ingresar</button>
+          <p class="form__feedback" id="admin-feedback" role="status" aria-live="polite"></p>
+        </form>
+        <div id="admin-content" class="admin-content" hidden>
+          <div class="admin-actions">
+            <button type="button" class="button" id="admin-export">Descargar Excel</button>
+            <button type="button" class="button button--secondary" id="admin-logout">Cerrar sesión</button>
+          </div>
+          <div class="table-container" role="region" aria-live="polite" aria-labelledby="admin-title">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Correo</th>
+                  <th scope="col">Teléfono</th>
+                  <th scope="col">Dirección</th>
+                  <th scope="col">Servicio</th>
+                  <th scope="col">Comentarios</th>
+                  <th scope="col">Fecha</th>
+                </tr>
+              </thead>
+              <tbody id="registros-body">
+                <tr class="admin-empty" hidden>
+                  <td colspan="7">Aún no hay solicitudes registradas.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <footer class="footer" role="contentinfo">
     <div class="footer__inner">
       <p>© <span id="year"></span> TU BASURA, MI TESORO. Todos los derechos reservados.</p>
@@ -111,9 +158,228 @@
   </footer>
 
   <script>
+    const STORAGE_KEY = 'tubasura-registros';
+    const ADMIN_PASSWORD = 'TESORO2024';
+
     const yearElement = document.getElementById('year');
+    const form = document.getElementById('reserva-form');
+    const feedback = document.getElementById('form-feedback');
+    const adminToggle = document.getElementById('admin-toggle');
+    const adminPanel = document.getElementById('admin-panel');
+    const adminLogin = document.getElementById('admin-login');
+    const adminPassword = document.getElementById('admin-password');
+    const adminFeedback = document.getElementById('admin-feedback');
+    const adminContent = document.getElementById('admin-content');
+    const adminExport = document.getElementById('admin-export');
+    const adminLogout = document.getElementById('admin-logout');
+    const registrosBody = document.getElementById('registros-body');
+
+    const getRegistros = () => {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        return stored ? JSON.parse(stored) : [];
+      } catch (error) {
+        console.error('No se pudieron leer los registros', error);
+        return [];
+      }
+    };
+
+    const guardarRegistros = (registros) => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
+      } catch (error) {
+        console.error('No se pudieron guardar los registros', error);
+      }
+    };
+
+    const limpiarTabla = () => {
+      if (!registrosBody) return;
+      registrosBody.querySelectorAll('tr').forEach((row) => {
+        if (!row.classList.contains('admin-empty')) {
+          row.remove();
+        }
+      });
+    };
+
+    const actualizarTabla = () => {
+      if (!registrosBody) return;
+      const registros = getRegistros();
+      limpiarTabla();
+
+      const emptyRow = registrosBody.querySelector('.admin-empty');
+      if (!registros.length) {
+        if (emptyRow) {
+          emptyRow.hidden = false;
+        }
+        return;
+      }
+
+      if (emptyRow) {
+        emptyRow.hidden = true;
+      }
+
+      registros.forEach((registro) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td data-label="Nombre">${registro.nombre}</td>
+          <td data-label="Correo">${registro.email}</td>
+          <td data-label="Teléfono">${registro.telefono}</td>
+          <td data-label="Dirección">${registro.direccion}</td>
+          <td data-label="Servicio">${registro.servicio}</td>
+          <td data-label="Comentarios">${registro.comentarios || '—'}</td>
+          <td data-label="Fecha">${registro.fecha}</td>
+        `;
+        registrosBody.appendChild(row);
+      });
+    };
+
+    const exportarExcel = () => {
+      const registros = getRegistros();
+      if (!registros.length) {
+        if (adminFeedback) {
+          adminFeedback.textContent = 'No hay registros para exportar.';
+        }
+        return;
+      }
+
+      const encabezados = ['Nombre', 'Correo', 'Teléfono', 'Dirección', 'Servicio', 'Comentarios', 'Fecha'];
+      const filas = registros.map((registro) => [
+        registro.nombre,
+        registro.email,
+        registro.telefono,
+        registro.direccion,
+        registro.servicio,
+        registro.comentarios?.replace(/\r?\n/g, ' '),
+        registro.fecha
+      ]);
+
+      const contenido = [encabezados, ...filas]
+        .map((fila) => fila.map((celda) => `"${(celda || '').replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+      const blob = new Blob([contenido], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const enlace = document.createElement('a');
+      enlace.href = url;
+      enlace.download = `solicitudes-tu-basura-mi-tesoro-${new Date().toISOString().slice(0, 10)}.xlsx`;
+      enlace.click();
+      URL.revokeObjectURL(url);
+      if (adminFeedback) {
+        adminFeedback.textContent = 'Descarga generada correctamente.';
+      }
+    };
+
     if (yearElement) {
       yearElement.textContent = new Date().getFullYear();
+    }
+
+    if (form) {
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const registro = {
+          nombre: (formData.get('nombre') || '').toString().trim(),
+          email: (formData.get('email') || '').toString().trim(),
+          telefono: (formData.get('telefono') || '').toString().trim(),
+          direccion: (formData.get('direccion') || '').toString().trim(),
+          servicio: formData.get('servicio'),
+          comentarios: (formData.get('comentarios') || '').toString().trim(),
+          fecha: new Intl.DateTimeFormat('es-UY', {
+            dateStyle: 'full',
+            timeStyle: 'short'
+          }).format(new Date())
+        };
+
+        if (!registro.servicio) {
+          feedback.textContent = 'Seleccioná el tipo de servicio para continuar.';
+          return;
+        }
+
+        const registros = getRegistros();
+        registros.push(registro);
+        guardarRegistros(registros);
+        form.reset();
+        const select = form.querySelector('#servicio');
+        if (select) {
+          select.selectedIndex = 0;
+        }
+        feedback.textContent = '¡Gracias! Tu solicitud fue registrada correctamente.';
+      });
+    }
+
+    if (adminToggle && adminPanel) {
+      adminToggle.addEventListener('click', () => {
+        const isHidden = adminPanel.hasAttribute('hidden');
+        if (isHidden) {
+          adminPanel.hidden = false;
+          adminToggle.setAttribute('aria-expanded', 'true');
+          if (adminFeedback) {
+            adminFeedback.textContent = '';
+          }
+          if (adminPassword) {
+            adminPassword.focus();
+          }
+        } else {
+          adminPanel.hidden = true;
+          adminToggle.setAttribute('aria-expanded', 'false');
+          if (adminContent) {
+            adminContent.hidden = true;
+          }
+          if (adminLogin) {
+            adminLogin.hidden = false;
+            adminLogin.reset();
+          }
+          if (adminFeedback) {
+            adminFeedback.textContent = '';
+          }
+        }
+      });
+    }
+
+    if (adminLogin) {
+      adminLogin.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const password = adminPassword ? adminPassword.value.trim() : '';
+        if (password === ADMIN_PASSWORD) {
+          adminLogin.hidden = true;
+          if (adminContent) {
+            adminContent.hidden = false;
+          }
+          if (adminFeedback) {
+            adminFeedback.textContent = 'Acceso concedido. Ahora podés revisar y descargar los registros.';
+          }
+          actualizarTabla();
+        } else {
+          if (adminFeedback) {
+            adminFeedback.textContent = 'Contraseña incorrecta. Intentá nuevamente.';
+          }
+          if (adminPassword) {
+            adminPassword.focus();
+          }
+        }
+      });
+    }
+
+    if (adminLogout) {
+      adminLogout.addEventListener('click', () => {
+        if (adminContent) {
+          adminContent.hidden = true;
+        }
+        if (adminLogin) {
+          adminLogin.hidden = false;
+          adminLogin.reset();
+        }
+        if (adminFeedback) {
+          adminFeedback.textContent = 'Sesión cerrada.';
+        }
+        if (adminPassword) {
+          adminPassword.focus();
+        }
+      });
+    }
+
+    if (adminExport) {
+      adminExport.addEventListener('click', exportarExcel);
     }
   </script>
 </body>
