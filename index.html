@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TU BASURA MI TESORO - Reservas y Citas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero" role="banner">
+    <div class="hero__overlay"></div>
+    <div class="hero__content">
+      <div class="hero__branding">
+        <img src="truck-icon.svg" alt="Camión reciclador" class="hero__icon" width="96" height="96">
+        <div class="hero__heading">
+          <h1 class="hero__title">TU BASURA, MI TESORO</h1>
+          <p class="hero__subtitle">Recicladora habilitada I.M.M. Nº 354 • Servicio en Montevideo, Uruguay</p>
+        </div>
+      </div>
+      <a class="hero__cta" href="#reserva">Agendar retiro o solicitar información</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="section" aria-labelledby="servicios-title">
+      <div class="section__inner">
+        <h2 id="servicios-title">Servicios disponibles</h2>
+        <p>Trabajamos con agenda previa para atender necesidades puntuales o contratos de retiro planificado. Seleccioná la opción que mejor se adapte a tu empresa u hogar:</p>
+        <div class="cards" role="list">
+          <article class="card" role="listitem">
+            <h3>Contrato mensual</h3>
+            <p>Programá retiros frecuentes para residuos reciclables y especiales. Ideal para locales comerciales y oficinas.</p>
+          </article>
+          <article class="card" role="listitem">
+            <h3>Contrato anual</h3>
+            <p>Coordiná un plan integral de gestión de residuos con tarifas preferenciales y seguimiento permanente.</p>
+          </article>
+          <article class="card" role="listitem">
+            <h3>Retiro puntual</h3>
+            <p>Solución rápida para limpiezas, eventos o acumulaciones inesperadas. ¡Coordinamos tu retiro en la fecha que necesites!</p>
+          </article>
+          <article class="card" role="listitem">
+            <h3>Información general</h3>
+            <p>Asesoramiento sobre clasificación, disposición y reciclaje. Estamos para ayudarte a gestionar tus residuos.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--highlight" id="reserva" aria-labelledby="form-title">
+      <div class="section__inner">
+        <div class="section__text">
+          <h2 id="form-title">Reservá tu retiro o pedí información</h2>
+          <p>Completá el formulario y nos pondremos en contacto para coordinar tu servicio. También podés escribirnos por WhatsApp al <strong>095 079 009</strong>.</p>
+          <ul class="contact-list">
+            <li><span aria-hidden="true">📍</span> Servicio disponible en Montevideo, Uruguay</li>
+            <li><span aria-hidden="true">🕒</span> Agenda previa de lunes a sábado</li>
+            <li><span aria-hidden="true">♻️</span> Gestión responsable de residuos</li>
+          </ul>
+        </div>
+        <form class="form" aria-describedby="form-instructions">
+          <p id="form-instructions">Los campos marcados con * son obligatorios.</p>
+          <div class="form__field">
+            <label for="nombre">Nombre completo *</label>
+            <input type="text" id="nombre" name="nombre" required autocomplete="name">
+          </div>
+          <div class="form__field">
+            <label for="email">Correo electrónico *</label>
+            <input type="email" id="email" name="email" required autocomplete="email">
+          </div>
+          <div class="form__field">
+            <label for="telefono">Teléfono de contacto *</label>
+            <input type="tel" id="telefono" name="telefono" required autocomplete="tel">
+          </div>
+          <div class="form__field">
+            <label for="direccion">Dirección del local o residencia *</label>
+            <input type="text" id="direccion" name="direccion" required autocomplete="street-address">
+          </div>
+          <div class="form__field">
+            <label for="servicio">Tipo de servicio *</label>
+            <select id="servicio" name="servicio" required>
+              <option value="" disabled selected>Seleccioná una opción</option>
+              <option value="mensual">Contrato mensual</option>
+              <option value="anual">Contrato anual</option>
+              <option value="puntual">Retiro puntual</option>
+              <option value="info">Información general</option>
+            </select>
+          </div>
+          <div class="form__field">
+            <label for="comentarios">Comentarios (tipo de residuo, horarios, etc.)</label>
+            <textarea id="comentarios" name="comentarios" rows="4"></textarea>
+          </div>
+          <button type="submit" class="button">Enviar solicitud</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="accesibilidad-title">
+      <div class="section__inner section__inner--narrow">
+        <h2 id="accesibilidad-title">Compromiso con la accesibilidad</h2>
+        <p>Nuestro sitio está diseñado para ser sencillo y usable por todas las personas. Si necesitás asistencia adicional o preferís agendar por otro medio, comunicate al <strong>095 079 009</strong> y te ayudaremos.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <p>© <span id="year"></span> TU BASURA, MI TESORO. Todos los derechos reservados.</p>
+      <p>Recicladora habilitada I.M.M. Nº 354</p>
+    </div>
+  </footer>
+
+  <script>
+    const yearElement = document.getElementById('year');
+    if (yearElement) {
+      yearElement.textContent = new Date().getFullYear();
+    }
+  </script>
+</body>
+</html>
