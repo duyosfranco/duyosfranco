@@ -71,6 +71,7 @@ img {
   background: rgba(11, 96, 103, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
   z-index: 8;
 }
 
@@ -125,11 +126,14 @@ img {
   padding: 0.6rem 0.9rem;
   border-radius: 14px;
   color: var(--blanco);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
 .nav__cta {
   background: var(--blanco);
   color: var(--teal-profundo);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(11, 96, 103, 0.15);
 }
 
 .menu {
@@ -170,6 +174,7 @@ img {
   padding: 3.5rem 0 2.5rem;
   background: linear-gradient(120deg, #0b6067 0%, #0f8a86 45%, #1ec7c3 100%);
   color: var(--blanco);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
 }
 
 .hero__grid {
@@ -205,7 +210,7 @@ img {
 }
 
 .section--alt {
-  background: var(--blanco);
+  background: #e9f5f4;
 }
 
 .section__head {
@@ -244,7 +249,7 @@ img {
   border: 1px solid rgba(11, 96, 103, 0.1);
   display: grid;
   gap: 0.4rem;
-  box-shadow: 0 10px 30px rgba(11, 96, 103, 0.08);
+  box-shadow: 0 10px 30px rgba(11, 96, 103, 0.12);
 }
 
 .card--light {
@@ -497,9 +502,9 @@ img {
 }
 
 .section--cta {
-  background: var(--blanco);
-  border-top: 1px solid #e5f1f2;
-  border-bottom: 1px solid #e5f1f2;
+  background: #e9f5f4;
+  border-top: 1px solid #d9eded;
+  border-bottom: 1px solid #d9eded;
 }
 
 .cta {
